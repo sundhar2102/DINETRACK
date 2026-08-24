@@ -8,78 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend-and-web:
-    name: 🌐 Backend & Web Frontend CI
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📥 Check out repository
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setup Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
-            e2e-tests/package-lock.json
-
-      - name: 📦 Install Backend Dependencies
-        run: |
-          cd backend
-          npm ci || npm install
-
-      - name: 🗄️ Initialize & Seed Test Database
-        run: |
-          cd backend
-          npm run seed
-
-      - name: 🧪 Execute Backend Integration & Deep Domain Tests
-        run: |
-          cd backend
-          npm run test:all
-
-      - name: 📦 Install Frontend Dependencies & Build
-        run: |
-          cd frontend
-          npm ci || npm install
-          npm run build
-
-  flutter-mobile:
-    name: 📱 Flutter Mobile CI
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📥 Check out repository
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: 🐦 Setup Flutter 3.x
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.29.0'
-          channel: 'stable'
-          cache: true
-
-      - name: 📦 Install Flutter Dependencies
-        run: flutter pub get
-
-      - name: 🔍 Static Analysis (flutter analyze)
-        run: flutter analyze
-
-      - name: 🧪 Execute Flutter Unit & Widget Test Suite
-        run: flutter test test/widget_test.dart test/customer_home_test.dart test/owner_auth_test.dart
-
-  e2e-automation-and-excel:
-    name: 📊 E2E Automation (356 Tests) & Excel Report
-    needs: [backend-and-web, flutter-mobile]
+  smarttable-ci:
+    name: 🚀 Smart Table Unified Enterprise CI / CD
     runs-on: ubuntu-latest
 
     steps:
@@ -91,10 +21,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: 📦 Install Backend & E2E Testing Dependencies
+      - name: 📦 Install Backend & Frontend Dependencies
         run: |
-          npm --prefix backend ci || npm --prefix backend install
-          npm --prefix e2e-tests ci || npm --prefix e2e-tests install
+          npm --prefix backend install
+          npm --prefix frontend install
+          npm --prefix e2e-tests install
 
       - name: 🗄️ Seed SQLite Database
         run: |
@@ -105,14 +36,40 @@ jobs:
         run: |
           cd backend
           npm start &
-          sleep 4
+          sleep 5
 
-      - name: 🧪 Execute 356 Multi-Type E2E Test Cases & Generate Excel Analytics
+      - name: 🧪 Execute Backend Integration & Deep Domain Tests (22 Tests)
+        run: |
+          cd backend
+          npm run test:all
+
+      - name: 💻 Build Web Frontend Production Bundle (Vite)
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 🐦 Setup Flutter 3.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Install Flutter Dependencies & Static Analysis
+        run: |
+          flutter pub get
+          flutter analyze
+
+      - name: 📱 Execute Flutter Mobile Unit & Widget Tests (15 Tests)
+        run: |
+          flutter test test/widget_test.dart test/customer_home_test.dart test/owner_auth_test.dart
+
+      - name: 📊 Execute 356 Multi-Type E2E Matrix & Generate Excel Analytics
         run: |
           cd e2e-tests
           npm test
 
-      - name: 📊 Upload Smart Table E2E & Load Excel Analytics Reports
+      - name: 📤 Upload Excel Analytics Report Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SmartTable-Excel-Quality-Reports
