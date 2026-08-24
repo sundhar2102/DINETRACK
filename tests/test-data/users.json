@@ -1,0 +1,68 @@
+{
+  "customers": [
+    {
+      "id": "usr-cust-001",
+      "name": "Alex Morgan",
+      "email": "alex@smarttable.com",
+      "password": "Password123!",
+      "phone": "+91 98765 43210",
+      "role": "CUSTOMER"
+    },
+    {
+      "id": "usr-cust-002",
+      "name": "Priya Sharma",
+      "email": "priya.sharma@example.com",
+      "password": "Password123!",
+      "phone": "+91 98765 43211",
+      "role": "CUSTOMER"
+    },
+    {
+      "id": "test-customer-001",
+      "name": "Test Customer",
+      "email": "test.customer@smarttable.test",
+      "password": "TestPassword123!",
+      "phone": "+91 99999 88888",
+      "role": "CUSTOMER"
+    }
+  ],
+  "owners": [
+    {
+      "id": "usr-own-001",
+      "name": "Sangeetha Ramanathan",
+      "email": "owner@sangeetha.com",
+      "password": "Password123!",
+      "phone": "+91 98765 43220",
+      "role": "OWNER",
+      "restaurantId": "rest-001",
+      "restaurantName": "Sangeetha Veg Gourmet"
+    },
+    {
+      "id": "usr-own-002",
+      "name": "Karthik Subramaniam",
+      "email": "owner@saravanabhavan.com",
+      "password": "Password123!",
+      "phone": "+91 98765 43221",
+      "role": "OWNER",
+      "restaurantId": "rest-002",
+      "restaurantName": "Saravana Bhavan Grand"
+    },
+    {
+      "id": "test-owner-001",
+      "name": "Test Restaurant Owner",
+      "email": "test.owner@smarttable.test",
+      "password": "TestPassword123!",
+      "phone": "+91 99999 77777",
+      "role": "OWNER",
+      "restaurantId": "rest-001"
+    }
+  ],
+  "admins": [
+    {
+      "id": "usr-adm-001",
+      "name": "Master Platform Admin",
+      "email": "admin@smarttable.com",
+      "password": "Password123!",
+      "role": "ADMIN"
+    }
+  ]
+}

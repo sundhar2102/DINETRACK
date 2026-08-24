@@ -1,0 +1,57 @@
+name: Appium Mobile Android E2E Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  mobile-tests:
+    name: 📱 Appium Android Mobile E2E (100+ Tests)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: ⚙️ Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter 3.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Install Root & Flutter Dependencies
+        run: |
+          npm install
+          flutter pub get
+
+      - name: 🔍 Static Analysis & Unit Tests
+        run: |
+          flutter analyze
+          flutter test test/widget_test.dart test/customer_home_test.dart test/owner_auth_test.dart
+
+      - name: 📱 Execute Mobile Test Audit & Validation
+        run: |
+          node scripts/validate-test-count.js
+          npm run report:excel
+
+      - name: 📤 Upload Mobile Test Quality Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-Appium-Quality-Report
+          path: test-reports/excel/SMARTTABLE_Test_Report.xlsx
+          retention-days: 30

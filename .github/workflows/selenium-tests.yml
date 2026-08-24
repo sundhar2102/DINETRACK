@@ -1,0 +1,74 @@
+name: Selenium Web End-to-End Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  selenium-web-tests:
+    name: 🌐 Selenium Web E2E (220+ Tests)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install Root, Backend & Frontend Dependencies
+        run: |
+          npm install
+          npm --prefix backend install
+          npm --prefix frontend install
+
+      - name: 🗄️ Initialize & Seed Test Database
+        run: |
+          cd backend
+          npm run seed
+
+      - name: 🚀 Start Backend API Daemon
+        run: |
+          cd backend
+          npm start &
+          sleep 4
+
+      - name: 💻 Build & Start Web Frontend
+        run: |
+          cd frontend
+          npm run build
+          npm run preview -- --port 5174 &
+          sleep 3
+
+      - name: 🧪 Execute Selenium Web Tests
+        run: |
+          npm run test:web
+
+      - name: 📊 Generate Multi-Sheet Excel & HTML Reports
+        run: |
+          npm run report:excel
+          npm run report:summary
+
+      - name: 📤 Upload Excel & HTML Reports Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Selenium-Web-Test-Reports
+          path: |
+            test-reports/excel/SMARTTABLE_Test_Report.xlsx
+            test-reports/html/index.html
+            test-reports/logs/test-execution.log
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: 📸 Upload Failure Screenshots (if any)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Selenium-Failure-Screenshots
+          path: test-reports/screenshots/web/
+          retention-days: 14

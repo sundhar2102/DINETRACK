@@ -1,0 +1,24 @@
+{
+  "sqlInjectionPayloads": [
+    "' OR '1'='1",
+    "'; DROP TABLE users; --",
+    "\" OR \"\"=\""
+  ],
+  "xssPayloads": [
+    "<script>alert('xss')</script>",
+    "<img src=x onerror=alert('xss')>",
+    "javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/\"/+/onmouseover=1/+/[*/[]/+alert(1)//'>"
+  ],
+  "boundaryInputs": {
+    "emptyStrings": ["", "   ", "\t\n"],
+    "longStrings": "A".repeat(1000),
+    "invalidEmails": [
+      "plainaddress",
+      "#@%^%#$@#$@#.com",
+      "@example.com",
+      "Joe Smith <email@example.com>",
+      "email.example.com",
+      "email@example@example.com"
+    ]
+  }
+}

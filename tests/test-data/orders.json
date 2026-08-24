@@ -1,0 +1,14 @@
+{
+  "sampleOrders": [
+    {
+      "restaurantId": "rest-001",
+      "items": [
+        { "id": "item-sng-001", "name": "Ghee Roast Dosa", "price": 120, "quantity": 2 },
+        { "id": "item-sng-004", "name": "Filter Coffee", "price": 40, "quantity": 2 }
+      ],
+      "subtotal": 320,
+      "tax": 16,
+      "total": 336
+    }
+  ]
+}

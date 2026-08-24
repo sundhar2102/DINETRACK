@@ -54,6 +54,8 @@ node_modules/
 .env.local
 test-results/
 **/test-results/
+test-reports/screenshots/
+test-reports/logs/
 *.sqlite
 *.sqlite3
 *.db

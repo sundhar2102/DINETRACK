@@ -1,0 +1,48 @@
+name: API & Database Integration Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: 🔌 Backend API & DB Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install Dependencies
+        run: |
+          npm install
+          npm --prefix backend install
+
+      - name: 🗄️ Seed Test Database
+        run: |
+          cd backend
+          npm run seed
+
+      - name: 🚀 Start Backend Daemon
+        run: |
+          cd backend
+          npm start &
+          sleep 4
+
+      - name: 🧪 Run Backend & API Tests
+        run: |
+          npm run test:api
+          npm --prefix backend run test:all
+
+      - name: 📊 Generate Reports
+        run: |
+          npm run report:excel
+          npm run report:summary

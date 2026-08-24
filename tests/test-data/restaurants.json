@@ -1,0 +1,47 @@
+[
+  {
+    "id": "rest-001",
+    "name": "Sangeetha Veg Gourmet",
+    "cuisine": "South Indian / Vegetarian",
+    "rating": 4.8,
+    "reviewCount": 1240,
+    "address": "No. 7 Gandhi Irwin Road, Egmore, Chennai",
+    "latitude": 13.0784,
+    "longitude": 80.2608,
+    "isPureVeg": true,
+    "averageCost": 350,
+    "openingHours": "07:00 AM - 11:00 PM",
+    "tablesCount": 10,
+    "menuCategories": ["Signature Dosas", "Tiffin Specials", "Thali Platters", "Beverages", "Desserts"]
+  },
+  {
+    "id": "rest-002",
+    "name": "Saravana Bhavan Grand",
+    "cuisine": "Traditional South Indian",
+    "rating": 4.6,
+    "reviewCount": 980,
+    "address": "12 Kennet Lane, Egmore, Chennai",
+    "latitude": 13.0799,
+    "longitude": 80.2619,
+    "isPureVeg": true,
+    "averageCost": 400,
+    "openingHours": "06:30 AM - 10:30 PM",
+    "tablesCount": 8,
+    "menuCategories": ["Breakfast", "Lunch Specials", "Combos", "Juices"]
+  },
+  {
+    "id": "rest-003",
+    "name": "Anjappar Chettinad Restaurant",
+    "cuisine": "Chettinad / Non-Veg",
+    "rating": 4.5,
+    "reviewCount": 750,
+    "address": "45 Sterling Road, Nungambakkam, Chennai",
+    "latitude": 13.0645,
+    "longitude": 80.2384,
+    "isPureVeg": false,
+    "averageCost": 550,
+    "openingHours": "11:00 AM - 11:00 PM",
+    "tablesCount": 12,
+    "menuCategories": ["Biryani", "Starters", "Curries", "Breads"]
+  }
+]
