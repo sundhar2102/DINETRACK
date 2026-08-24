@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0B0F19] text-gray-100 antialiased selection:bg-red-600 selection:text-white min-h-screen font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom scrollbars for sleek dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0B0F19;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #C81E1E;
+  }
+}
+
+.font-script {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+}
+
+.font-handwriting {
+  font-family: 'Dancing Script', 'Caveat', cursive;
+}
+
+.font-caveat {
+  font-family: 'Caveat', cursive;
+}
+
+/* DinerPoint Modern Sleek Dark Card & Panel System */
+.dp-card {
+  background: #161F30;
+  border: 1px solid #1F293D;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.dp-card:hover {
+  border-color: #334155;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+.dp-panel {
+  background: #161F30;
+  border: 1px solid #1F293D;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+}
+
+.dp-input {
+  background: #0F172A;
+  border: 1px solid #334155;
+  color: #F8FAFC;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.dp-input:focus {
+  border-color: #C81E1E;
+  box-shadow: 0 0 0 3px rgba(200, 30, 30, 0.25);
+  outline: none;
+}
+
+.dp-btn-primary {
+  background-color: #C81E1E;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 8px rgba(200, 30, 30, 0.3);
+}
+
+.dp-btn-primary:hover {
+  background-color: #991B1B;
+  box-shadow: 0 4px 16px rgba(200, 30, 30, 0.5);
+}
+
+.dp-btn-secondary {
+  background-color: #1E293B;
+  color: #E2E8F0;
+  font-weight: 600;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.dp-btn-secondary:hover {
+  background-color: #334155;
+  border-color: #475569;
+  color: #FFFFFF;
+}
+
+/* Status Badges */
+.status-available {
+  @apply bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 font-semibold;
+}
+.status-occupied {
+  @apply bg-rose-950/80 text-rose-400 border border-rose-500/30 font-semibold;
+}
+.status-reserved {
+  @apply bg-amber-950/80 text-amber-400 border border-amber-500/30 font-semibold;
+}
+.status-cleaning {
+  @apply bg-orange-950/80 text-orange-400 border border-orange-500/30 font-semibold;
+}
+
+/* Leaflet Dark Popup Customization */
+.leaflet-popup-content-wrapper {
+  background: #161F30 !important;
+  color: #F8FAFC !important;
+  border: 1px solid #334155 !important;
+  border-radius: 1rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-popup-tip {
+  background: #161F30 !important;
+}

@@ -1,0 +1,33 @@
+{
+  "name": "smarttable-e2e-tests",
+  "version": "1.0.0",
+  "description": "Enterprise End-to-End Selenium (Web) and Appium (Mobile) Test Suite for Smart Table with Excel Analytics Reporter",
+  "main": "test-runner.js",
+  "scripts": {
+    "test": "node test-runner.js",
+    "test:web": "node test-runner.js --suite=web",
+    "test:mobile": "node test-runner.js --suite=mobile",
+    "test:quick": "node test-runner.js --headless"
+  },
+  "keywords": [
+    "selenium",
+    "webdriver",
+    "appium",
+    "e2e-testing",
+    "smarttable",
+    "exceljs",
+    "test-report"
+  ],
+  "author": "Smart Table Engineering",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "chai": "^4.5.0",
+    "chromedriver": "^133.0.0",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "mocha": "^10.8.2",
+    "selenium-webdriver": "^4.27.0",
+    "webdriverio": "^8.40.6"
+  }
+}

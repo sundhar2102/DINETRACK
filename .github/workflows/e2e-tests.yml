@@ -1,0 +1,56 @@
+name: Smart Table End-to-End Automated Testing & Excel Report CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    name: Selenium & Appium E2E Matrix (300+ Tests)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Backend & Frontend Dependencies
+        run: |
+          npm --prefix backend ci || npm --prefix backend install
+          npm --prefix frontend ci || npm --prefix frontend install
+
+      - name: 📦 Install E2E Testing Dependencies
+        run: |
+          cd e2e-tests
+          npm install
+
+      - name: 🗄️ Seed SQLite Database
+        run: |
+          cd backend
+          npm run seed || echo "Database initialized"
+
+      - name: 🚀 Start Backend API Daemon
+        run: |
+          cd backend
+          npm start &
+          sleep 5
+
+      - name: 🧪 Execute Master E2E Test Suite & Generate Excel Report
+        run: |
+          cd e2e-tests
+          npm test
+
+      - name: 📊 Upload Excel Analysis Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartTable-E2E-Excel-Report
+          path: e2e-tests/test-results/SmartTable_E2E_Test_Report.xlsx
+          retention-days: 30

@@ -1,0 +1,23 @@
+{
+  "name": "smarttable-ai-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartTable AI - Production Restaurant Discovery, Pre-Order & 21-Module Owner Platform",
+  "scripts": {
+    "dev:backend": "npm --prefix backend start",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev": "node start-dev.js",
+    "start": "npm --prefix backend start",
+    "test": "npm --prefix backend test",
+    "test:owner": "npm --prefix backend run test:owner",
+    "test:all": "npm --prefix backend run test:all",
+    "test:e2e": "npm --prefix e2e-tests test",
+    "test:e2e:report": "npm --prefix e2e-tests test",
+    "build": "npm --prefix frontend run build",
+    "build:all": "npm --prefix frontend run build && npm --prefix frontend run sync:android",
+    "sync:android": "npm --prefix frontend run sync:android",
+    "seed": "npm --prefix backend run seed"
+  },
+
+  "keywords": ["smarttable", "restaurant", "reservations", "real-time", "kds", "pos"]
+}
