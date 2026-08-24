@@ -7,7 +7,9 @@
     "test": "node test-runner.js",
     "test:web": "node test-runner.js --suite=web",
     "test:mobile": "node test-runner.js --suite=mobile",
-    "test:quick": "node test-runner.js --headless"
+    "test:quick": "node test-runner.js --headless",
+    "test:load": "node load-tests/load-runner.js",
+    "test:load:quick": "cross-env VUS=50 DURATION=10 node load-tests/load-runner.js"
   },
   "keywords": [
     "selenium",

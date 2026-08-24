@@ -13,6 +13,7 @@
     "test:all": "npm --prefix backend run test:all",
     "test:e2e": "npm --prefix e2e-tests test",
     "test:e2e:report": "npm --prefix e2e-tests test",
+    "test:load": "npm --prefix e2e-tests run test:load",
     "build": "npm --prefix frontend run build",
     "build:all": "npm --prefix frontend run build && npm --prefix frontend run sync:android",
     "sync:android": "npm --prefix frontend run sync:android",

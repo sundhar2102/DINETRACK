@@ -5,6 +5,7 @@ const apiLimiter = rateLimit({
   max: 300, // Limit each IP to 300 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.SKIP_RATE_LIMIT === 'true' || process.env.NODE_ENV === 'test' || req.headers['x-load-test'] === 'true',
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again after 15 minutes'
@@ -16,6 +17,7 @@ const authLimiter = rateLimit({
   max: 50,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.SKIP_RATE_LIMIT === 'true' || process.env.NODE_ENV === 'test' || req.headers['x-load-test'] === 'true',
   message: {
     success: false,
     message: 'Too many authentication attempts, please try again later'
