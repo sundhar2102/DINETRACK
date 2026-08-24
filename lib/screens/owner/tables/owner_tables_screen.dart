@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/app_theme.dart';
 import '../../../models/restaurant_model.dart';
 import '../../../models/table_model.dart';
 import '../../../services/owner_api_service.dart';
 import '../../../services/owner_auth_service.dart';
+import '../../../services/socket_service.dart';
 import '../auth/owner_login_screen.dart';
 import 'add_table_screen.dart';
 import 'edit_table_screen.dart';
@@ -36,6 +38,8 @@ class _OwnerTablesScreenState extends State<OwnerTablesScreen> {
   String _searchQuery = '';
   String _selectedFilter = 'ALL';
   bool _isProcessingAction = false;
+  
+  StreamSubscription? _tableStatusSub;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -65,10 +69,15 @@ class _OwnerTablesScreenState extends State<OwnerTablesScreen> {
     _authService = widget.authService ?? OwnerAuthService();
     _restaurant = widget.restaurant;
     _loadData();
+    
+    _tableStatusSub = SocketService().onTableStatusChanged.listen((_) {
+      if (mounted) _loadData();
+    });
   }
 
   @override
   void dispose() {
+    _tableStatusSub?.cancel();
     _searchController.dispose();
     super.dispose();
   }

@@ -1,0 +1,9 @@
+"Metric","Value"
+"Total Requests",144076
+"Requests per second (Average)",2401.77
+"Min Latency (ms)",3
+"Max Latency (ms)",1510
+"Average Latency (ms)",124.27
+"p99 Latency (ms)",885
+"Total Errors",0
+"Total Timeouts",0

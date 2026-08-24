@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/json_parser.dart';
 
 enum TableStatus {
   available,
@@ -100,7 +101,7 @@ class TableModel {
       id: (json['id'] ?? '').toString(),
       restaurantId: (json['restaurant_id'] ?? json['restaurantId'] ?? '').toString(),
       tableNumber: (json['table_number'] ?? json['tableNumber'] ?? 'T-01').toString(),
-      capacity: (json['capacity'] is num) ? (json['capacity'] as num).toInt() : int.tryParse(json['capacity']?.toString() ?? '2') ?? 2,
+      capacity: JsonParser.parseInt(json['capacity'], 2),
       section: (json['section'] ?? 'Main Dining').toString(),
       status: TableStatus.fromString(json['status']?.toString()),
       occupiedSince: json['occupied_since']?.toString(),

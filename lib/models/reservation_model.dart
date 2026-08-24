@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/json_parser.dart';
 
 class OrderItemModel {
   final String id;
@@ -26,22 +27,13 @@ class OrderItemModel {
   });
 
   factory OrderItemModel.fromJson(Map<String, dynamic> json) {
-    final qty = (json['quantity'] is num)
-        ? (json['quantity'] as num).toInt()
-        : int.tryParse(json['quantity']?.toString() ?? '1') ?? 1;
-
-    final unitP = (json['unit_price'] ?? json['price'] is num)
-        ? ((json['unit_price'] ?? json['price']) as num).toDouble()
-        : double.tryParse((json['unit_price'] ?? json['price'])?.toString() ?? '0') ?? 0.0;
-
-    final totalP = (json['total_price'] is num)
-        ? (json['total_price'] as num).toDouble()
+    final qty = JsonParser.parseInt(json['quantity'], 1);
+    final unitP = JsonParser.parseDouble(json['unit_price'] ?? json['price'], 0.0);
+    final totalP = (json['total_price'] != null)
+        ? JsonParser.parseDouble(json['total_price'], 0.0)
         : (unitP * qty);
 
-    final isVeg = json['is_vegetarian'] == 1 ||
-        json['is_vegetarian'] == true ||
-        json['is_vegetarian'] == '1' ||
-        json['isVegetarian'] == true;
+    final isVeg = JsonParser.parseBool(json['is_vegetarian'] ?? json['isVegetarian']);
 
     return OrderItemModel(
       id: (json['id'] ?? '').toString(),
@@ -53,9 +45,7 @@ class OrderItemModel {
       totalPrice: totalP,
       imageUrl: (json['item_image'] ?? json['image_url'] ?? json['imageUrl'])?.toString(),
       isVegetarian: isVeg,
-      prepTimeMinutes: (json['prep_time_minutes'] is num)
-          ? (json['prep_time_minutes'] as num).toInt()
-          : 15,
+      prepTimeMinutes: JsonParser.parseInt(json['prep_time_minutes'], 15),
     );
   }
 
@@ -288,17 +278,9 @@ class ReservationModel {
           .toList();
     }
 
-    final subT = (json['subtotal'] is num)
-        ? (json['subtotal'] as num).toDouble()
-        : double.tryParse(json['subtotal']?.toString() ?? '0') ?? 0.0;
-
-    final tx = (json['tax'] is num)
-        ? (json['tax'] as num).toDouble()
-        : double.tryParse(json['tax']?.toString() ?? '0') ?? 0.0;
-
-    final tot = (json['total_amount'] ?? json['order_total'] is num)
-        ? ((json['total_amount'] ?? json['order_total']) as num).toDouble()
-        : double.tryParse((json['total_amount'] ?? json['order_total'])?.toString() ?? '0') ?? 0.0;
+    final subT = JsonParser.parseDouble(json['subtotal'], 0.0);
+    final tx = JsonParser.parseDouble(json['tax'], 0.0);
+    final tot = JsonParser.parseDouble(json['total_amount'] ?? json['order_total'], 0.0);
 
     return ReservationModel(
       id: (json['id'] ?? '').toString(),
@@ -313,19 +295,13 @@ class ReservationModel {
       userEmail: (json['user_email'] ?? json['userEmail'] ?? json['customer_email'] ?? json['email'])?.toString(),
       tableId: json['table_id']?.toString(),
       tableNumber: (json['table_number'] ?? json['tableNumber'])?.toString(),
-      tableCapacity: (json['table_capacity'] is num)
-          ? (json['table_capacity'] as num).toInt()
-          : int.tryParse(json['table_capacity']?.toString() ?? ''),
-      guestCount: (json['guest_count'] is num)
-          ? (json['guest_count'] as num).toInt()
-          : int.tryParse(json['guest_count']?.toString() ?? '2') ?? 2,
+      tableCapacity: json['table_capacity'] != null ? JsonParser.parseInt(json['table_capacity']) : null,
+      guestCount: JsonParser.parseInt(json['guest_count'], 2),
       reservationDate: (json['reservation_date'] ?? json['reservationDate'] ?? '').toString(),
       reservationTime: (json['reservation_time'] ?? json['reservationTime'] ?? '').toString(),
       status: (json['status'] ?? 'PENDING').toString(),
       specialRequests: (json['special_requests'] ?? json['specialRequests'])?.toString(),
-      estimatedArrivalMinutes: (json['estimated_arrival_minutes'] is num)
-          ? (json['estimated_arrival_minutes'] as num).toInt()
-          : int.tryParse(json['estimated_arrival_minutes']?.toString() ?? '15') ?? 15,
+      estimatedArrivalMinutes: JsonParser.parseInt(json['estimated_arrival_minutes'], 15),
       createdAt: (json['created_at'] ?? json['createdAt'])?.toString(),
       updatedAt: (json['updated_at'] ?? json['updatedAt'])?.toString(),
       orderId: (json['order_id'] ?? json['orderId'])?.toString(),

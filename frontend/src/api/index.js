@@ -2,6 +2,7 @@ import { apiRequest } from './client';
 
 export const authApi = {
   login: (credentials) => apiRequest('/auth/login', { method: 'POST', body: credentials }),
+  googleLogin: (data) => apiRequest('/auth/google', { method: 'POST', body: data }),
   register: (userData) => apiRequest('/auth/register', { method: 'POST', body: userData }),
   getMe: () => apiRequest('/auth/me'),
   logout: () => apiRequest('/auth/logout', { method: 'POST' })

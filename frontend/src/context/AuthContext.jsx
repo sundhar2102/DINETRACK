@@ -43,6 +43,19 @@ export const AuthProvider = ({ children }) => {
     setToken(tokenData);
     localStorage.setItem('smarttable_token', tokenData);
     localStorage.setItem('smarttable_user', JSON.stringify(userData));
+    localStorage.setItem('smarttable_user', JSON.stringify(userData));
+    return res.data;
+  };
+
+  const googleLogin = async (idToken, role) => {
+    const res = await authApi.googleLogin({ idToken, role });
+    const userData = res.data.user;
+    const tokenData = res.data.token;
+    
+    setUser(userData);
+    setToken(tokenData);
+    localStorage.setItem('smarttable_token', tokenData);
+    localStorage.setItem('smarttable_user', JSON.stringify(userData));
     return res.data;
   };
 
@@ -111,6 +124,7 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         login,
+        googleLogin,
         register,
         logout,
         switchDemoUser,

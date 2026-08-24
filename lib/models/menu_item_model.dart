@@ -1,3 +1,5 @@
+import '../utils/json_parser.dart';
+
 /// Menu Item Data Model mapped strictly from DineTrack SQLite database and REST API
 class MenuItemModel {
   final String id;
@@ -32,39 +34,18 @@ class MenuItemModel {
 
   /// Factory constructor to deserialize backend JSON response
   factory MenuItemModel.fromJson(Map<String, dynamic> json) {
-    double parseDouble(dynamic value, [double defaultValue = 0.0]) {
-      if (value == null) return defaultValue;
-      if (value is num) return value.toDouble();
-      return double.tryParse(value.toString()) ?? defaultValue;
-    }
-
-    int parseInt(dynamic value, [int defaultValue = 0]) {
-      if (value == null) return defaultValue;
-      if (value is int) return value;
-      if (value is num) return value.toInt();
-      return int.tryParse(value.toString()) ?? defaultValue;
-    }
-
-    bool parseBool(dynamic value, [bool defaultValue = false]) {
-      if (value == null) return defaultValue;
-      if (value is bool) return value;
-      if (value is num) return value == 1;
-      final str = value.toString().toLowerCase();
-      return str == '1' || str == 'true';
-    }
-
     return MenuItemModel(
       id: json['id']?.toString() ?? '',
       restaurantId: json['restaurant_id']?.toString() ?? json['restaurantId']?.toString() ?? '',
       categoryId: json['category_id']?.toString() ?? json['categoryId']?.toString() ?? '',
       name: json['name']?.toString() ?? 'Unnamed Item',
       description: json['description']?.toString(),
-      price: parseDouble(json['price']),
-      prepTimeMinutes: parseInt(json['prep_time_minutes'] ?? json['prepTimeMinutes'], 15),
-      isVegetarian: parseBool(json['is_vegetarian'] ?? json['isVegetarian']),
-      isVegan: parseBool(json['is_vegan'] ?? json['isVegan']),
-      isGlutenFree: parseBool(json['is_gluten_free'] ?? json['isGlutenFree']),
-      isAvailable: parseBool(json['is_available'] ?? json['isAvailable'], true),
+      price: JsonParser.parseDouble(json['price']),
+      prepTimeMinutes: JsonParser.parseInt(json['prep_time_minutes'] ?? json['prepTimeMinutes'], 15),
+      isVegetarian: JsonParser.parseBool(json['is_vegetarian'] ?? json['isVegetarian']),
+      isVegan: JsonParser.parseBool(json['is_vegan'] ?? json['isVegan']),
+      isGlutenFree: JsonParser.parseBool(json['is_gluten_free'] ?? json['isGlutenFree']),
+      isAvailable: JsonParser.parseBool(json['is_available'] ?? json['isAvailable'], true),
       imageUrl: json['image_url']?.toString() ?? json['imageUrl']?.toString(),
       spicinessLevel: json['spiciness_level']?.toString() ?? json['spicinessLevel']?.toString() ?? 'MILD',
     );

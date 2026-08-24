@@ -1,3 +1,4 @@
+import '../utils/json_parser.dart';
 import 'menu_category_model.dart';
 import 'menu_item_model.dart';
 
@@ -75,28 +76,6 @@ class RestaurantModel {
 
   /// Factory constructor to deserialize backend JSON response
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
-    // Helper to safely parse numeric values
-    double parseDouble(dynamic value, [double defaultValue = 0.0]) {
-      if (value == null) return defaultValue;
-      if (value is num) return value.toDouble();
-      return double.tryParse(value.toString()) ?? defaultValue;
-    }
-
-    int parseInt(dynamic value, [int defaultValue = 0]) {
-      if (value == null) return defaultValue;
-      if (value is int) return value;
-      if (value is num) return value.toInt();
-      return int.tryParse(value.toString()) ?? defaultValue;
-    }
-
-    bool parseBool(dynamic value) {
-      if (value == null) return false;
-      if (value is bool) return value;
-      if (value is num) return value == 1;
-      final str = value.toString().toLowerCase();
-      return str == '1' || str == 'true';
-    }
-
     // Parse Menu Categories if present in payload
     List<MenuCategoryModel>? parsedCategories;
     final catData = json['categories'] ?? json['menuCategories'] ?? json['menu'];
@@ -124,14 +103,14 @@ class RestaurantModel {
       description: json['description']?.toString(),
       cuisine: json['cuisine']?.toString() ?? 'Multi-Cuisine',
       priceRange: json['price_range']?.toString() ?? '₹₹',
-      rating: parseDouble(json['rating'] ?? json['average_rating'], 4.5),
-      ratingCount: parseInt(json['rating_count'] ?? json['total_reviews'], 0),
+      rating: JsonParser.parseDouble(json['rating'] ?? json['average_rating'], 4.5),
+      ratingCount: JsonParser.parseInt(json['rating_count'] ?? json['total_reviews'], 0),
       phone: json['phone']?.toString(),
       email: json['email']?.toString(),
       imageUrl: json['image_url']?.toString(),
       coverImageUrl: json['cover_image_url']?.toString(),
-      isOpen: parseBool(json['is_open']),
-      isVerified: parseBool(json['is_verified']),
+      isOpen: JsonParser.parseBool(json['is_open']),
+      isVerified: JsonParser.parseBool(json['is_verified']),
       verificationStatus: json['verification_status']?.toString() ?? 'APPROVED',
       fssaiLicense: json['fssai_license']?.toString(),
       openingTime: json['opening_time']?.toString() ?? '08:00',
@@ -141,13 +120,13 @@ class RestaurantModel {
       city: json['city']?.toString() ?? json['location']?['city']?.toString() ?? 'Chennai',
       state: json['state']?.toString() ?? json['location']?['state']?.toString() ?? 'Tamil Nadu',
       postalCode: json['postal_code']?.toString() ?? json['location']?['postal_code']?.toString(),
-      latitude: json['latitude'] != null ? parseDouble(json['latitude']) : null,
-      longitude: json['longitude'] != null ? parseDouble(json['longitude']) : null,
-      distanceKm: json['distanceKm'] != null ? parseDouble(json['distanceKm']) : (json['distance_km'] != null ? parseDouble(json['distance_km']) : null),
-      estimatedTravelTimeMinutes: json['estimatedTravelTimeMinutes'] != null ? parseInt(json['estimatedTravelTimeMinutes']) : null,
-      availableTablesCount: json['availableTablesCount'] != null ? parseInt(json['availableTablesCount']) : (json['waitInfo']?['availableTablesCount'] != null ? parseInt(json['waitInfo']['availableTablesCount']) : null),
-      totalTablesCount: json['totalTablesCount'] != null ? parseInt(json['totalTablesCount']) : (json['waitInfo']?['totalTables'] != null ? parseInt(json['waitInfo']['totalTables']) : null),
-      estimatedWaitTime: json['estimatedWaitTime'] != null ? parseInt(json['estimatedWaitTime']) : (json['waitInfo']?['estimatedWaitTime'] != null ? parseInt(json['waitInfo']['estimatedWaitTime']) : null),
+      latitude: json['latitude'] != null ? JsonParser.parseDouble(json['latitude']) : null,
+      longitude: json['longitude'] != null ? JsonParser.parseDouble(json['longitude']) : null,
+      distanceKm: json['distanceKm'] != null ? JsonParser.parseDouble(json['distanceKm']) : (json['distance_km'] != null ? JsonParser.parseDouble(json['distance_km']) : null),
+      estimatedTravelTimeMinutes: json['estimatedTravelTimeMinutes'] != null ? JsonParser.parseInt(json['estimatedTravelTimeMinutes']) : null,
+      availableTablesCount: json['availableTablesCount'] != null ? JsonParser.parseInt(json['availableTablesCount']) : (json['waitInfo']?['availableTablesCount'] != null ? JsonParser.parseInt(json['waitInfo']['availableTablesCount']) : null),
+      totalTablesCount: json['totalTablesCount'] != null ? JsonParser.parseInt(json['totalTablesCount']) : (json['waitInfo']?['totalTables'] != null ? JsonParser.parseInt(json['waitInfo']['totalTables']) : null),
+      estimatedWaitTime: json['estimatedWaitTime'] != null ? JsonParser.parseInt(json['estimatedWaitTime']) : (json['waitInfo']?['estimatedWaitTime'] != null ? JsonParser.parseInt(json['waitInfo']['estimatedWaitTime']) : null),
       crowdLevel: json['crowd_level']?.toString() ?? json['crowdLevel']?.toString() ?? json['waitInfo']?['crowdLevel']?.toString(),
       menuCategories: parsedCategories,
       menuItems: parsedItems,

@@ -1,3 +1,5 @@
+import '../utils/json_parser.dart';
+
 class AvailabilityModel {
   final String restaurantId;
   final int partySize;
@@ -40,16 +42,16 @@ class AvailabilityModel {
   factory AvailabilityModel.fromJson(Map<String, dynamic> json) {
     return AvailabilityModel(
       restaurantId: (json['restaurantId'] ?? json['restaurant_id'] ?? '').toString(),
-      partySize: (json['partySize'] is num) ? (json['partySize'] as num).toInt() : int.tryParse(json['partySize']?.toString() ?? '2') ?? 2,
-      estimatedWaitTime: (json['estimatedWaitTime'] is num) ? (json['estimatedWaitTime'] as num).toInt() : 0,
-      minimumWaitTime: (json['minimumWaitTime'] is num) ? (json['minimumWaitTime'] as num).toInt() : 0,
-      maximumWaitTime: (json['maximumWaitTime'] is num) ? (json['maximumWaitTime'] as num).toInt() : 0,
+      partySize: JsonParser.parseInt(json['partySize'], 2),
+      estimatedWaitTime: JsonParser.parseInt(json['estimatedWaitTime'], 0),
+      minimumWaitTime: JsonParser.parseInt(json['minimumWaitTime'], 0),
+      maximumWaitTime: JsonParser.parseInt(json['maximumWaitTime'], 0),
       confidence: (json['confidence'] ?? 'HIGH').toString(),
       crowdLevel: (json['crowdLevel'] ?? 'LOW').toString(),
-      queueLength: (json['queueLength'] is num) ? (json['queueLength'] as num).toInt() : 0,
-      totalTables: (json['totalTables'] is num) ? (json['totalTables'] as num).toInt() : 0,
-      availableTablesCount: (json['availableTablesCount'] is num) ? (json['availableTablesCount'] as num).toInt() : 0,
-      occupiedTablesCount: (json['occupiedTablesCount'] is num) ? (json['occupiedTablesCount'] as num).toInt() : 0,
+      queueLength: JsonParser.parseInt(json['queueLength'], 0),
+      totalTables: JsonParser.parseInt(json['totalTables'], 0),
+      availableTablesCount: JsonParser.parseInt(json['availableTablesCount'], 0),
+      occupiedTablesCount: JsonParser.parseInt(json['occupiedTablesCount'], 0),
       lastUpdated: (json['lastUpdated'] ?? '').toString(),
     );
   }

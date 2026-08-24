@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/app_theme.dart';
 import '../../../models/reservation_model.dart';
 import '../../../services/owner_api_service.dart';
 import '../../../services/owner_auth_service.dart';
+import '../../../services/socket_service.dart';
 import '../../../widgets/owner_booking_card.dart';
 import 'owner_booking_details_screen.dart';
 
@@ -32,6 +34,8 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
   String? _errorMessage;
   String _selectedFilter = 'ALL';
   String? _updatingReservationId;
+  StreamSubscription? _reservationCreatedSub;
+  StreamSubscription? _reservationUpdatedSub;
 
   final List<Map<String, String>> _filterTabs = [
     {'label': 'All', 'status': 'ALL'},
@@ -52,6 +56,24 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
       _selectedFilter = widget.initialFilter!;
     }
     _loadReservations();
+    _initSocketListeners();
+  }
+
+  void _initSocketListeners() {
+    final socketService = SocketService();
+    _reservationCreatedSub = socketService.onReservationCreated.listen((_) {
+      if (mounted) _loadReservations();
+    });
+    _reservationUpdatedSub = socketService.onReservationUpdated.listen((_) {
+      if (mounted) _loadReservations();
+    });
+  }
+
+  @override
+  void dispose() {
+    _reservationCreatedSub?.cancel();
+    _reservationUpdatedSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadReservations() async {

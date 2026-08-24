@@ -27,6 +27,19 @@ const login = async (req, res, next) => {
   }
 };
 
+const googleLogin = async (req, res, next) => {
+  try {
+    const { idToken, role } = req.body;
+    if (!idToken) {
+      return errorResponse(res, 'Google ID token is required', 400);
+    }
+    const result = await authService.googleLogin({ idToken, role });
+    return successResponse(res, result, 'Google Login successful');
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getMe = async (req, res, next) => {
   try {
     const user = await authService.getMe(req.user.id);
@@ -43,6 +56,7 @@ const logout = async (req, res) => {
 module.exports = {
   register,
   login,
+  googleLogin,
   getMe,
   logout
 };

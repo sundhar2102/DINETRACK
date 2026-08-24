@@ -1,3 +1,4 @@
+import '../utils/json_parser.dart';
 import 'menu_item_model.dart';
 
 /// Menu Category Data Model mapped strictly from DineTrack SQLite database and REST API
@@ -22,20 +23,6 @@ class MenuCategoryModel {
 
   /// Factory constructor to deserialize backend JSON response
   factory MenuCategoryModel.fromJson(Map<String, dynamic> json) {
-    int parseInt(dynamic value, [int defaultValue = 0]) {
-      if (value == null) return defaultValue;
-      if (value is int) return value;
-      if (value is num) return value.toInt();
-      return int.tryParse(value.toString()) ?? defaultValue;
-    }
-
-    bool parseBool(dynamic value, [bool defaultValue = true]) {
-      if (value == null) return defaultValue;
-      if (value is bool) return value;
-      if (value is num) return value == 1;
-      final str = value.toString().toLowerCase();
-      return str == '1' || str == 'true';
-    }
 
     List<MenuItemModel> parsedItems = [];
     if (json['items'] is List) {
@@ -50,8 +37,8 @@ class MenuCategoryModel {
       restaurantId: json['restaurant_id']?.toString() ?? json['restaurantId']?.toString() ?? '',
       name: json['name']?.toString() ?? 'Unnamed Category',
       description: json['description']?.toString(),
-      displayOrder: parseInt(json['display_order'] ?? json['displayOrder'], 0),
-      isActive: parseBool(json['is_active'] ?? json['isActive'], true),
+      displayOrder: JsonParser.parseInt(json['display_order'] ?? json['displayOrder'], 0),
+      isActive: JsonParser.parseBool(json['is_active'] ?? json['isActive'], true),
       items: parsedItems,
     );
   }

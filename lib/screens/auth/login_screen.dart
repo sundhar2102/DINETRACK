@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../core/app_theme.dart';
 import '../../services/auth_service.dart';
 import '../home/customer_home_screen.dart';
@@ -71,6 +72,65 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       // Navigate based on backend authenticated user role
+      if (user.isOwner) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => OwnerDashboardScreen(
+              ownerUser: user,
+            ),
+          ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => CustomerHomeScreen(
+              currentUser: user,
+              authService: _authService,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleGoogleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile'],
+      );
+
+      final GoogleSignInAccount? account = await googleSignIn.signIn();
+      if (account == null) {
+        setState(() {
+          _isLoading = false;
+        });
+        return; // User canceled
+      }
+
+      final GoogleSignInAuthentication auth = await account.authentication;
+      final String? idToken = auth.idToken;
+
+      if (idToken == null) {
+        throw Exception('Google login failed: No ID Token received.');
+      }
+
+      final user = await _authService.googleLogin(
+        idToken,
+        role: _isOwnerMode ? 'OWNER' : 'CUSTOMER',
+      );
+
+      if (!mounted) return;
+
       if (user.isOwner) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -482,6 +542,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                     letterSpacing: 0.5,
                                   ),
                                 ),
+                        ),
+
+                        const SizedBox(height: 16),
+                        Row(
+                          children: const [
+                            Expanded(child: Divider(color: AppTheme.darkBorder)),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text('OR', style: TextStyle(color: AppTheme.textMuted, fontSize: 12)),
+                            ),
+                            Expanded(child: Divider(color: AppTheme.darkBorder)),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Google Login Button
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _handleGoogleLogin,
+                          icon: const Icon(Icons.g_mobiledata, color: Colors.white, size: 28),
+                          label: const Text(
+                            'Sign in with Google',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueGrey.shade800,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 0,
+                          ),
                         ),
                       ],
                     ),

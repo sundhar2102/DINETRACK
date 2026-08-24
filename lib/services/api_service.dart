@@ -66,6 +66,39 @@ class ApiService {
     }
   }
 
+  /// Perform Google Login
+  Future<Map<String, dynamic>> googleLogin(String idToken, String role) async {
+    try {
+      final response = await _dio.post(
+        '/auth/google',
+        data: {'idToken': idToken, 'role': role},
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final body = response.data;
+        final data = (body is Map<String, dynamic>) ? (body['data'] ?? body) : body;
+        if (data is Map<String, dynamic>) {
+          return data;
+        }
+      }
+      throw Exception('Google login failed: Invalid response format');
+    } on DioException catch (e) {
+      String errorMessage = 'Google login failed';
+      if (e.response != null) {
+        final data = e.response?.data;
+        final serverMsg = (data is Map<String, dynamic>)
+            ? (data['message'] ?? data['error'])
+            : null;
+        errorMessage = serverMsg ?? 'Google login failed (${e.response?.statusCode})';
+      }
+      developer.log(errorMessage, name: 'DineTrackAPI', error: e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      developer.log('Google login error: $e', name: 'DineTrackAPI');
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    }
+  }
+
   /// Fetch real restaurant list from existing DineTrack backend
   Future<List<RestaurantModel>> getRestaurants({
     double? lat,

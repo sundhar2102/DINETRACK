@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { getDb } = require('../../database/db');
 const env = require('../config/env');
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 
 const generateToken = (userId, role) => {
   return jwt.sign({ userId, role }, env.JWT_SECRET, {
@@ -95,6 +98,70 @@ const login = async ({ email, password }) => {
   };
 };
 
+const googleLogin = async ({ idToken, role = 'CUSTOMER' }) => {
+  const db = await getDb();
+
+  let payload;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch (error) {
+    const err = new Error('Invalid Google token.');
+    err.statusCode = 401;
+    err.isOperational = true;
+    throw err;
+  }
+
+  const { email, name, picture } = payload;
+  
+  let user = await db.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()]);
+  
+  if (!user) {
+    // Create new user
+    const userId = crypto.randomUUID();
+    const avatarUrl = picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`;
+    
+    await db.run(
+      `INSERT INTO users (id, name, email, password_hash, role, avatar_url)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [userId, name, email.toLowerCase().trim(), '', role, avatarUrl]
+    );
+    
+    user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+  }
+
+  const token = generateToken(user.id, user.role);
+
+  let restaurant = null;
+  if (user.role === 'OWNER') {
+    restaurant = await db.get('SELECT id, name FROM restaurants WHERE owner_id = ? LIMIT 1', [user.id]);
+  } else if (user.role === 'STAFF') {
+    const staffRec = await db.get(
+      'SELECT r.id, r.name, rs.staff_role FROM restaurant_staff rs JOIN restaurants r ON rs.restaurant_id = r.id WHERE rs.user_id = ? LIMIT 1',
+      [user.id]
+    );
+    if (staffRec) {
+      restaurant = { id: staffRec.id, name: staffRec.name, staffRole: staffRec.staff_role };
+    }
+  }
+
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      avatar_url: user.avatar_url,
+      restaurant
+    },
+    token
+  };
+};
+
 const getMe = async (userId) => {
   const db = await getDb();
   const user = await db.get(
@@ -130,5 +197,6 @@ const getMe = async (userId) => {
 module.exports = {
   register,
   login,
+  googleLogin,
   getMe
 };

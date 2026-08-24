@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/app_theme.dart';
 import '../../../models/reservation_model.dart';
@@ -12,6 +13,7 @@ import '../bookings/owner_booking_details_screen.dart';
 import '../bookings/owner_bookings_screen.dart';
 import '../menu/owner_menu_screen.dart';
 import '../profile/owner_profile_screen.dart';
+import '../../../services/socket_service.dart';
 import '../tables/owner_tables_screen.dart';
 
 /// Restaurant Owner Dashboard Screen for DineTrack Partners
@@ -45,12 +47,49 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
   String? _errorMessage;
   int _selectedTabIndex = 0;
 
+  // Socket stream subscriptions
+  StreamSubscription? _tableStatusSub;
+  StreamSubscription? _reservationCreatedSub;
+  StreamSubscription? _reservationUpdatedSub;
+  StreamSubscription? _orderStatusSub;
+
   @override
   void initState() {
     super.initState();
     _apiService = widget.apiService ?? OwnerApiService();
     _authService = widget.authService ?? OwnerAuthService();
     _loadDashboardData();
+    _initSocketListeners();
+  }
+
+  void _initSocketListeners() {
+    final restId = widget.ownerUser.restaurantId;
+    final userId = widget.ownerUser.id;
+    
+    final socketService = SocketService();
+    socketService.initSocket(userId: userId, restaurantId: restId);
+
+    _tableStatusSub = socketService.onTableStatusChanged.listen((_) {
+      if (mounted) _loadDashboardData();
+    });
+    _reservationCreatedSub = socketService.onReservationCreated.listen((_) {
+      if (mounted) _loadDashboardData();
+    });
+    _reservationUpdatedSub = socketService.onReservationUpdated.listen((_) {
+      if (mounted) _loadDashboardData();
+    });
+    _orderStatusSub = socketService.onOrderStatusChanged.listen((_) {
+      if (mounted) _loadDashboardData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _tableStatusSub?.cancel();
+    _reservationCreatedSub?.cancel();
+    _reservationUpdatedSub?.cancel();
+    _orderStatusSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadDashboardData() async {

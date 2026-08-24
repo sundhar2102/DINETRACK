@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Utensils, Mail, Lock, Sparkles, ArrowRight, Store } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const [email, setEmail] = useState('alex@smarttable.com');
   const [password, setPassword] = useState('Password123!');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const { login, switchDemoUser } = useAuth();
+  const { login, googleLogin, switchDemoUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +31,27 @@ export default function Login() {
       }
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setSubmitting(true);
+    try {
+      const res = await googleLogin(credentialResponse.credential, 'CUSTOMER');
+      const userRole = res.user?.role?.toUpperCase();
+      const redirectFrom = location.state?.from?.pathname;
+      if (redirectFrom && redirectFrom !== '/login') {
+        navigate(redirectFrom);
+      } else if (userRole === 'OWNER' || userRole === 'STAFF' || userRole === 'ADMIN') {
+        navigate('/restaurant/dashboard');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.message || 'Google Login failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -107,6 +129,20 @@ export default function Login() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
+
+        {/* Google Login */}
+        <div className="pt-4 border-t border-gray-800 flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError('Google Login Failed');
+            }}
+            useOneTap
+            shape="rectangular"
+            theme="filled_black"
+            text="signin_with"
+          />
+        </div>
 
         {/* 1-Click Demo Accounts */}
         <div className="pt-2 border-t border-gray-800 space-y-2">

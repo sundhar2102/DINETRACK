@@ -136,7 +136,76 @@ class AuthService {
       throw Exception(e.toString().replaceFirst('Exception: ', ''));
     }
 
+  }
 
+  /// 1.5. Google Login
+  Future<UserModel> googleLogin(String idToken, {String role = 'CUSTOMER'}) async {
+    try {
+      final response = await _dio.post(
+        '/auth/google',
+        data: {
+          'idToken': idToken,
+          'role': role,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final dynamic rawBody = response.data;
+        final Map<String, dynamic> body = (rawBody is Map)
+            ? Map<String, dynamic>.from(rawBody)
+            : <String, dynamic>{};
+        final dynamic rawData = body['data'] ?? body;
+        final Map<String, dynamic> data = (rawData is Map)
+            ? Map<String, dynamic>.from(rawData)
+            : <String, dynamic>{};
+
+        final dynamic rawUser = data['user'];
+        final Map<String, dynamic> userJson = (rawUser is Map)
+            ? Map<String, dynamic>.from(rawUser)
+            : <String, dynamic>{};
+        final token = (data['token'] ?? '').toString();
+
+        final user = UserModel.fromJson(userJson);
+
+        // Persist session
+        _token = token;
+        _currentUser = user;
+
+        final prefs = await _getPrefs();
+        await prefs.setString(_keyToken, token);
+        await prefs.setString(_keyUser, jsonEncode(user.toJson()));
+
+        if (user.isOwner) {
+          await prefs.setString('smarttable_owner_token', token);
+          await prefs.setString('smarttable_owner_user', jsonEncode(user.toJson()));
+          if (user.restaurantId != null) {
+            await prefs.setString('smarttable_owner_restaurant', jsonEncode(user.toJson()));
+          }
+        }
+
+        developer.log('User logged in with Google: ${user.email} (Role: ${user.role})', name: 'SmartTableAuth');
+        return user;
+      }
+
+      throw Exception('Google login failed.');
+    } on DioException catch (e) {
+      String errorMessage = 'Google login failed';
+      if (e.response != null && e.response?.data != null) {
+        final data = e.response!.data;
+        if (data is Map) {
+          final map = Map<String, dynamic>.from(data);
+          final msg = map['message']?.toString() ?? map['error']?.toString();
+          if (msg != null && msg.trim().isNotEmpty) {
+            errorMessage = msg;
+          }
+        }
+      }
+      developer.log('Google login error: $errorMessage', name: 'DineTrackAuth', error: e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      developer.log('Unexpected Google login error: $e', name: 'DineTrackAuth', error: e);
+      throw Exception(e.toString().replaceFirst('Exception: ', ''));
+    }
   }
 
   /// 2. Customer Signup / Register

@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://127.0.0.1:5000';
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || `http://${window.location.hostname}:5000`;
     const newSocket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       autoConnect: true,

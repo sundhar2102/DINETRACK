@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Store, Lock, Mail, ArrowRight, ShieldCheck, Sparkles, ChefHat, UserCheck, UtensilsCrossed, Flame, Pizza } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 const RESTAURANT_PARTNERS = [
   {
@@ -73,7 +74,7 @@ export default function RestaurantLogin() {
   const [password, setPassword] = useState('Password123!');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const { login, switchDemoUser } = useAuth();
+  const { login, googleLogin, switchDemoUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSelectPartner = (partner) => {
@@ -92,6 +93,19 @@ export default function RestaurantLogin() {
       navigate('/restaurant/dashboard');
     } catch (err) {
       setError(err.message || 'Restaurant login failed. Please check credentials.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setSubmitting(true);
+    try {
+      await googleLogin(credentialResponse.credential, 'OWNER');
+      navigate('/restaurant/dashboard');
+    } catch (err) {
+      setError(err.message || 'Google Login failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -209,6 +223,20 @@ export default function RestaurantLogin() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
+
+        {/* Google Login */}
+        <div className="pt-4 border-t border-gray-800 flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError('Google Login Failed');
+            }}
+            useOneTap
+            shape="rectangular"
+            theme="filled_black"
+            text="signin_with"
+          />
+        </div>
 
         {/* 3. 1-Click Fast Instant Login Buttons */}
         <div className="pt-3 border-t border-gray-800 space-y-3">
