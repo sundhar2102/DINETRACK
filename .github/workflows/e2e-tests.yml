@@ -112,10 +112,10 @@ jobs:
           cd e2e-tests
           npm test
 
-      - name: 📊 Upload Smart Table E2E Excel Analytics Report
+      - name: 📊 Upload Smart Table E2E & Load Excel Analytics Reports
         uses: actions/upload-artifact@v4
         with:
-          name: SmartTable-E2E-Excel-Report
+          name: SmartTable-Excel-Quality-Reports
           path: e2e-tests/test-results/SmartTable_E2E_Test_Report.xlsx
           retention-days: 30
           if-no-files-found: error
