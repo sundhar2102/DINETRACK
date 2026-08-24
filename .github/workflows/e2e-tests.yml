@@ -1,4 +1,4 @@
-name: Smart Table End-to-End Automated Testing & Excel Report CI
+name: Smart Table Enterprise CI / CD Pipeline
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  e2e-tests:
-    name: Selenium & Appium E2E Matrix (300+ Tests)
+  backend-and-web:
+    name: 🌐 Backend & Web Frontend CI
     runs-on: ubuntu-latest
 
     steps:
@@ -21,36 +21,101 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            e2e-tests/package-lock.json
 
-      - name: 📦 Install Backend & Frontend Dependencies
+      - name: 📦 Install Backend Dependencies
+        run: |
+          cd backend
+          npm ci || npm install
+
+      - name: 🗄️ Initialize & Seed Test Database
+        run: |
+          cd backend
+          npm run seed
+
+      - name: 🧪 Execute Backend Integration & Deep Domain Tests
+        run: |
+          cd backend
+          npm run test:all
+
+      - name: 📦 Install Frontend Dependencies & Build
+        run: |
+          cd frontend
+          npm ci || npm install
+          npm run build
+
+  flutter-mobile:
+    name: 📱 Flutter Mobile CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter 3.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: 🔍 Static Analysis (flutter analyze)
+        run: flutter analyze
+
+      - name: 🧪 Execute Flutter Unit & Widget Test Suite
+        run: flutter test test/widget_test.dart test/customer_home_test.dart test/owner_auth_test.dart
+
+  e2e-automation-and-excel:
+    name: 📊 E2E Automation (356 Tests) & Excel Report
+    needs: [backend-and-web, flutter-mobile]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install Backend & E2E Testing Dependencies
         run: |
           npm --prefix backend ci || npm --prefix backend install
-          npm --prefix frontend ci || npm --prefix frontend install
-
-      - name: 📦 Install E2E Testing Dependencies
-        run: |
-          cd e2e-tests
-          npm install
+          npm --prefix e2e-tests ci || npm --prefix e2e-tests install
 
       - name: 🗄️ Seed SQLite Database
         run: |
           cd backend
-          npm run seed || echo "Database initialized"
+          npm run seed
 
       - name: 🚀 Start Backend API Daemon
         run: |
           cd backend
           npm start &
-          sleep 5
+          sleep 4
 
-      - name: 🧪 Execute Master E2E Test Suite & Generate Excel Report
+      - name: 🧪 Execute 356 Multi-Type E2E Test Cases & Generate Excel Analytics
         run: |
           cd e2e-tests
           npm test
 
-      - name: 📊 Upload Excel Analysis Test Report
+      - name: 📊 Upload Smart Table E2E Excel Analytics Report
         uses: actions/upload-artifact@v4
         with:
           name: SmartTable-E2E-Excel-Report
           path: e2e-tests/test-results/SmartTable_E2E_Test_Report.xlsx
           retention-days: 30
+          if-no-files-found: error
