@@ -10,9 +10,7 @@
     "test": "node test/api.test.js",
     "test:owner": "node test/owner_platform.test.js",
     "test:all": "node test/api.test.js && node test/owner_platform.test.js && node test/deep_audit.test.js",
-    "load-test": "node load-test.js",
-    "posttest": "git add -A && git commit -m \"Auto-commit after passing tests\" && git push",
-    "posttest:all": "git add -A && git commit -m \"Auto-commit after passing tests\" && git push"
+    "load-test": "node load-test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

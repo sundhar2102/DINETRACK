@@ -36,14 +36,14 @@ jobs:
         run: |
           cd backend
           npm start &
-          sleep 4
+          npx --yes wait-on http://127.0.0.1:5000/api/health -t 30000
 
       - name: 💻 Build & Start Web Frontend
         run: |
           cd frontend
           npm run build
-          npm run preview -- --port 5174 &
-          sleep 3
+          npm run preview -- --port 5174 --host &
+          npx --yes wait-on http://127.0.0.1:5174 -t 30000
 
       - name: 🧪 Execute Selenium Web Tests
         run: |

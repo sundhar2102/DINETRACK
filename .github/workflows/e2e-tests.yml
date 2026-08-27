@@ -36,7 +36,7 @@ jobs:
         run: |
           cd backend
           npm start &
-          sleep 5
+          npx --yes wait-on http://127.0.0.1:5000/api/health -t 30000
 
       - name: 🧪 Execute Backend Integration & Deep Domain Tests (22 Tests)
         run: |
