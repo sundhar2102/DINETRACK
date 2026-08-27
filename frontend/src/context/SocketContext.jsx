@@ -12,8 +12,14 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || `http://${window.location.hostname}:5000`;
+    const host = (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+      ? window.location.hostname
+      : '10.248.32.127';
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (
+      (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+        ? 'http://localhost:5000'
+        : `http://${host}:5000`
+    );
     const newSocket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       autoConnect: true,

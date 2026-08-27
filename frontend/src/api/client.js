@@ -1,4 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5000/api`;
+const getHost = () => {
+  if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return window.location.hostname;
+  }
+  return '10.248.32.127';
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || (
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+    ? 'http://localhost:5000/api'
+    : `http://${getHost()}:5000/api`
+);
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('smarttable_token');

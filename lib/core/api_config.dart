@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Centralized API Configuration for DineTrack Flutter App
 class ApiConfig {
-  /// Default LAN IP for physical device testing or Android Emulator
-  static const String defaultLanIp = '10.225.208.127';
+  /// Default LAN IP for physical device testing or Android Emulator (Your Wi-Fi IP)
+  static const String defaultLanIp = '10.248.32.127';
 
   /// Compile-time environment variable support: `--dart-define=API_HOST=10.225.208.127`
   static const String _envHost = String.fromEnvironment('API_HOST');
